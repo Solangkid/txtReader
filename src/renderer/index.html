@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>本地 TXT 阅读器</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <button class="icon-button hidden" id="backButton" title="返回书架" aria-label="返回书架">
+          <span aria-hidden="true">‹</span>
+        </button>
+        <div class="brand">
+          <span class="brand-mark">TXT</span>
+          <div class="brand-copy">
+            <h1>本地书架</h1>
+            <p id="subtitle">纯本地离线阅读</p>
+            <div class="top-readout hidden" id="topReadout">
+              <div class="top-progress-track" aria-label="阅读进度">
+                <span id="topProgressBar"></span>
+              </div>
+              <span id="topProgressText">0%</span>
+              <span id="clockText">--:--</span>
+              <span id="weatherText">天气获取中</span>
+            </div>
+          </div>
+        </div>
+        <div class="top-actions">
+          <div class="shelf-size-control" id="coverSizeRow" aria-label="书封尺寸">
+            <button data-size="compact" title="紧凑">紧</button>
+            <button data-size="standard" title="标准">标</button>
+            <button data-size="showcase" title="展示">展</button>
+          </div>
+          <button class="icon-button hidden" id="tocToggle" title="目录" aria-label="目录">☰</button>
+          <button class="icon-button hidden" id="settingsToggle" title="排版" aria-label="排版">⋯</button>
+          <button class="primary-button" id="importButton">导入 TXT</button>
+        </div>
+      </header>
+
+      <main>
+        <section class="bookshelf-view" id="bookshelfView">
+          <div class="shelf-hero">
+            <div>
+              <p class="eyebrow">LOCAL NOVEL ARCHIVE</p>
+              <h2>把小说安静地放回你的电脑里</h2>
+            </div>
+            <div class="drop-panel" id="dropPanel">
+              <div class="drop-glow"></div>
+              <strong>拖入 TXT</strong>
+              <span>也可以点击右上角导入</span>
+            </div>
+          </div>
+          <div class="book-grid" id="bookGrid"></div>
+          <div class="empty-state hidden" id="emptyState">
+            <div class="empty-ring"></div>
+            <h3>书架还是空的</h3>
+            <p>导入一本 TXT 小说后，它会出现在这里，并自动记住阅读进度。</p>
+          </div>
+        </section>
+
+        <section class="reader-view hidden" id="readerView">
+          <aside class="toc-drawer" id="tocDrawer">
+            <div class="toc-head">
+              <span>目录</span>
+              <strong id="tocCount">0</strong>
+            </div>
+            <nav class="toc-list" id="tocList" aria-label="章节目录"></nav>
+          </aside>
+
+          <section class="reader-stage" id="readerStage">
+            <div class="settings-panel hidden" id="settingsPanel">
+              <label>
+                <span>字号</span>
+                <input id="fontSize" type="range" min="15" max="30" step="1" />
+              </label>
+              <label>
+                <span>行距</span>
+                <input id="lineHeight" type="range" min="1.45" max="2.35" step="0.05" />
+              </label>
+              <label>
+                <span>字距</span>
+                <input id="letterSpacing" type="range" min="0" max="2" step="0.1" />
+              </label>
+              <label>
+                <span>宽度</span>
+                <input id="contentWidth" type="range" min="720" max="1160" step="20" />
+              </label>
+              <label>
+                <span>字体</span>
+                <select id="fontSelect"></select>
+              </label>
+              <div class="theme-row" id="themeRow">
+                <button data-theme="paper" title="纸页主题"></button>
+                <button data-theme="night" title="夜读主题"></button>
+                <button data-theme="jade" title="青玉主题"></button>
+              </div>
+            </div>
+
+            <article class="reader-page" id="readerPage">
+              <div class="reader-title" id="readerTitle">未选择书籍</div>
+              <div id="readerContent"></div>
+            </article>
+          </section>
+        </section>
+      </main>
+    </div>
+    <script src="./app.js"></script>
+  </body>
+</html>

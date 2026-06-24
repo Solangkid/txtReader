@@ -1,0 +1,16 @@
+{
+  "name": "local-txt-reader-demo",
+  "version": "0.1.0",
+  "description": "A local offline TXT novel reader demo for Windows 11.",
+  "main": "src/main.js",
+  "scripts": {
+    "start": "electron .",
+    "check": "node --check src/main.js && node --check src/preload.js && node --check src/renderer/app.js"
+  },
+  "dependencies": {
+    "iconv-lite": "^0.6.3"
+  },
+  "devDependencies": {
+    "electron": "^31.7.7"
+  }
+}
