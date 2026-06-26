@@ -196,18 +196,23 @@ async function createWindow() {
     minHeight: 650,
     title: "本地 TXT 阅读器",
     backgroundColor: "#f3efe6",
-    titleBarStyle: "hidden",
-    titleBarOverlay: {
-      color: "#f3efe6",
-      symbolColor: "#3d3427",
-      height: 42
-    },
+    frame: false,
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
       contextIsolation: true,
       nodeIntegration: false,
       sandbox: false
     }
+  });
+
+  win.on("maximize", () => {
+    win.webContents.send("window:state-changed", { maximized: true });
+  });
+  win.on("unmaximize", () => {
+    win.webContents.send("window:state-changed", { maximized: false });
+  });
+  win.on("restore", () => {
+    win.webContents.send("window:state-changed", { maximized: false });
   });
 
   await win.loadFile(path.join(__dirname, "renderer", "index.html"));
@@ -331,4 +336,25 @@ ipcMain.handle("books:remove", async (_event, id) => {
   }
   await writeLibrary(library);
   return publicLibrary(library);
+});
+
+ipcMain.handle("window:minimize", async (event) => {
+  BrowserWindow.fromWebContents(event.sender)?.minimize();
+  return null;
+});
+
+ipcMain.handle("window:toggleMaximize", async (event) => {
+  const win = BrowserWindow.fromWebContents(event.sender);
+  if (!win) return { maximized: false };
+  if (win.isMaximized()) {
+    win.unmaximize();
+  } else {
+    win.maximize();
+  }
+  return { maximized: win.isMaximized() };
+});
+
+ipcMain.handle("window:close", async (event) => {
+  BrowserWindow.fromWebContents(event.sender)?.close();
+  return null;
 });

@@ -6,7 +6,6 @@ const DEFAULT_SETTINGS = {
   letterSpacing: 0,
   contentWidth: 900,
   theme: "paper",
-  coverSize: "standard",
   fontFamily: "system",
   customFonts: []
 };
@@ -77,7 +76,9 @@ const els = {
   contentWidth: document.querySelector("#contentWidth"),
   fontSelect: document.querySelector("#fontSelect"),
   themeRow: document.querySelector("#themeRow"),
-  coverSizeRow: document.querySelector("#coverSizeRow")
+  minimizeButton: document.querySelector("#minimizeButton"),
+  maximizeButton: document.querySelector("#maximizeButton"),
+  closeButton: document.querySelector("#closeButton"),
 };
 
 function percent(value) {
@@ -158,7 +159,6 @@ function applySettings(settings, syncControls = true) {
 
   document.body.classList.toggle("theme-night", merged.theme === "night");
   document.body.classList.toggle("theme-jade", merged.theme === "jade");
-  document.body.dataset.coverSize = merged.coverSize;
 
   requestAnimationFrame(() => {
     document.documentElement.style.setProperty("--font-size", `${merged.fontSize}px`);
@@ -178,9 +178,6 @@ function applySettings(settings, syncControls = true) {
 
   els.themeRow.querySelectorAll("button").forEach((button) => {
     button.classList.toggle("active", button.dataset.theme === merged.theme);
-  });
-  els.coverSizeRow.querySelectorAll("button").forEach((button) => {
-    button.classList.toggle("active", button.dataset.size === merged.coverSize);
   });
 
   state.library.settings = merged;
@@ -423,6 +420,7 @@ function renderBookshelf() {
   books.forEach((book, index) => {
     const card = document.createElement("article");
     card.className = "book-card";
+    card.dataset.bookId = book.id;
     card.tabIndex = 0;
     card.setAttribute("role", "button");
     card.setAttribute("aria-label", `打开 ${book.title}`);
@@ -439,11 +437,11 @@ function renderBookshelf() {
       </div>
     `;
 
-    card.addEventListener("click", () => openBook(book.id));
+    card.addEventListener("click", () => safeOpenBook(book.id));
     card.addEventListener("keydown", (event) => {
       if (event.key === "Enter" || event.key === " ") {
         event.preventDefault();
-        openBook(book.id);
+        safeOpenBook(book.id);
       }
     });
     card.querySelector(".remove-book").addEventListener("click", async (event) => {
@@ -649,10 +647,17 @@ function showShelf() {
   els.tocToggle.classList.add("hidden");
   els.topReadout.classList.add("hidden");
   els.importButton.classList.remove("hidden");
-  els.coverSizeRow.classList.remove("hidden");
   document.querySelector(".brand h1").textContent = "本地书架";
   els.subtitle.textContent = state.library.books.length ? `${state.library.books.length} 本书在本地书架中` : "纯本地离线阅读";
   renderBookshelf();
+}
+
+async function safeOpenBook(id) {
+  try {
+    await openBook(id);
+  } catch (error) {
+    console.error("Failed to open book:", { id, error });
+  }
 }
 
 async function openBook(id) {
@@ -677,7 +682,6 @@ async function openBook(id) {
   els.tocToggle.classList.remove("hidden");
   els.topReadout.classList.remove("hidden");
   els.importButton.classList.add("hidden");
-  els.coverSizeRow.classList.add("hidden");
   document.querySelector(".brand h1").textContent = "";
   els.subtitle.textContent = "";
 
@@ -722,6 +726,12 @@ async function importDroppedFiles(files) {
 }
 
 function wireEvents() {
+  els.minimizeButton.addEventListener("click", () => api.minimizeWindow());
+  els.maximizeButton.addEventListener("click", async () => {
+    const state = await api.toggleMaximizeWindow();
+    els.maximizeButton.classList.toggle("maximized", Boolean(state?.maximized));
+  });
+  els.closeButton.addEventListener("click", () => api.closeWindow());
   els.importButton.addEventListener("click", importWithDialog);
   els.backButton.addEventListener("click", showShelf);
   els.settingsToggle.addEventListener("click", () => {
@@ -766,10 +776,12 @@ function wireEvents() {
     const button = event.target.closest("button[data-theme]");
     if (button) updateSettingsPreview({ theme: button.dataset.theme });
   });
-  els.coverSizeRow.addEventListener("click", (event) => {
-    const button = event.target.closest("button[data-size]");
-    if (button) updateSettingsPreview({ coverSize: button.dataset.size });
-  });
+
+  if (typeof api.onWindowStateChanged === "function") {
+    api.onWindowStateChanged((payload) => {
+      els.maximizeButton.classList.toggle("maximized", Boolean(payload?.maximized));
+    });
+  }
 }
 
 async function boot() {

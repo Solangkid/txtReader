@@ -7,14 +7,20 @@
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
+    <div class="ambient-scene" aria-hidden="true">
+      <span class="ambient-orb orb-1"></span>
+      <span class="ambient-orb orb-2"></span>
+      <span class="ambient-orb orb-3"></span>
+      <span class="ambient-orb orb-4"></span>
+      <span class="ambient-orb orb-focus"></span>
+    </div>
+    <a class="deerflow-badge" href="https://deerflow.tech" target="_blank" rel="noreferrer">Created By Deerflow</a>
     <div class="app-shell">
       <header class="topbar">
-        <button class="icon-button hidden" id="backButton" title="返回书架" aria-label="返回书架">
-          <span aria-hidden="true">‹</span>
-        </button>
         <div class="brand">
           <span class="brand-mark">TXT</span>
           <div class="brand-copy">
+            <p class="eyebrow">LOCAL NOVEL ARCHIVE</p>
             <h1>本地书架</h1>
             <p id="subtitle">纯本地离线阅读</p>
             <div class="top-readout hidden" id="topReadout">
@@ -28,13 +34,16 @@
           </div>
         </div>
         <div class="top-actions">
-          <div class="shelf-size-control" id="coverSizeRow" aria-label="书封尺寸">
-            <button data-size="compact" title="紧凑">紧</button>
-            <button data-size="standard" title="标准">标</button>
-            <button data-size="showcase" title="展示">展</button>
+          <div class="window-controls" aria-label="window controls">
+            <button class="window-button" id="minimizeButton" title="最小化" aria-label="最小化">–</button>
+            <button class="window-button" id="maximizeButton" title="最大化" aria-label="最大化">◻</button>
+            <button class="window-button close" id="closeButton" title="关闭" aria-label="关闭">×</button>
           </div>
+          <button class="icon-button hidden" id="backButton" title="返回书架" aria-label="返回书架">
+            <span aria-hidden="true">←</span>
+          </button>
           <button class="icon-button hidden" id="tocToggle" title="目录" aria-label="目录">☰</button>
-          <button class="icon-button hidden" id="settingsToggle" title="排版" aria-label="排版">⋯</button>
+          <button class="icon-button hidden" id="settingsToggle" title="排版" aria-label="排版">⚙</button>
           <button class="primary-button" id="importButton">导入 TXT</button>
         </div>
       </header>
@@ -44,7 +53,7 @@
           <div class="shelf-hero">
             <div>
               <p class="eyebrow">LOCAL NOVEL ARCHIVE</p>
-              <h2>把小说安静地放回你的电脑里</h2>
+              <h2>把小说放回安静的电脑里</h2>
             </div>
             <div class="drop-panel" id="dropPanel">
               <div class="drop-glow"></div>
